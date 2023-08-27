@@ -1,8 +1,18 @@
 import { Project, SyntaxKind } from "ts-morph";
 
+// create and configurate ts-morph project
 const project = new Project({ tsConfigFilePath: "tsconfig.json" });
 
-var newVariableDec, newExpression, newFileName, newStringLiteral;
+var variableMatches,
+  newVariableDec,
+  expressionMatches,
+  newExpression,
+  stringLiteralMatches,
+  newStringLiteral,
+  fileNameMatches,
+  newFileName;
+
+// get command-line parameter
 const renameTo = process.argv.slice(2);
 
 // loop over entire folder
@@ -11,14 +21,12 @@ for (const sourceFile of project.getSourceFiles("./toBeModified/*.tsx")) {
   for (const variableDec of sourceFile.getDescendantsOfKind(
     SyntaxKind.VariableDeclaration
   )) {
+    variableMatches = variableDec.getName().match(/Entity/gi);
     // if variable contains "Entity", rename
-    if (variableDec.getName().match(/Entity/g) != -1) {
-      newVariableDec = variableDec.getName().replace("Entity", renameTo);
-      variableDec.rename(newVariableDec);
-    }
-    // if variable contains "entity", rename
-    if (variableDec.getName().match(/entity/g) != -1) {
-      newVariableDec = variableDec.getName().replace("entity", renameTo);
+    if (variableMatches) {
+      newVariableDec = variableDec
+        .getName()
+        .replace(variableMatches[0], renameTo);
       variableDec.rename(newVariableDec);
     }
   }
@@ -27,12 +35,11 @@ for (const sourceFile of project.getSourceFiles("./toBeModified/*.tsx")) {
   for (const expression of sourceFile.getDescendantsOfKind(
     SyntaxKind.ExpressionStatement
   )) {
-    if (expression.getText().match(/Entity/g) != -1) {
-      newExpression = expression.getText().replace("Entity", renameTo);
-      expression.setExpression(newExpression);
-    }
-    if (expression.getText().match(/entity/g) != -1) {
-      newExpression = expression.getText().replace("entity", renameTo);
+    expressionMatches = expression.getText().match(/Entity/gi);
+    if (expressionMatches) {
+      newExpression = expression
+        .getText()
+        .replace(expressionMatches[0], renameTo);
       expression.setExpression(newExpression);
     }
   }
@@ -41,16 +48,11 @@ for (const sourceFile of project.getSourceFiles("./toBeModified/*.tsx")) {
   for (const stringLiteral of sourceFile.getDescendantsOfKind(
     SyntaxKind.StringLiteral
   )) {
-    if (stringLiteral.getLiteralText().match(/Entity/g) != -1) {
+    stringLiteralMatches = stringLiteral.getLiteralText().match(/Entity/gi);
+    if (stringLiteralMatches) {
       newStringLiteral = stringLiteral
         .getLiteralText()
-        .replace("Entity", renameTo);
-      stringLiteral.setLiteralValue(newStringLiteral);
-    }
-    if (stringLiteral.getLiteralText().match(/entity/g) != -1) {
-      newStringLiteral = stringLiteral
-        .getLiteralText()
-        .replace("entity", renameTo);
+        .replace(stringLiteralMatches[0], renameTo);
       stringLiteral.setLiteralValue(newStringLiteral);
     }
   }

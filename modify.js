@@ -9,7 +9,6 @@ var variableMatches,
   newExpression,
   stringLiteralMatches,
   newStringLiteral,
-  fileNameMatches,
   newFileName;
 
 // get command-line parameter
